@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Memories</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <!-- Fonts: Inter for minimal text, Press Start 2P for Retro Loading -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Audio Elements -->
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-start">
+        <source src="assets/sfx-start.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-complete">
+        <source src="assets/sfx-complete.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 3D Canvas Background Layer -->
+    <canvas id="cosmic-bg"></canvas>
+
+    <!-- 1. Start Interaction Screen -->
+    <div id="start-screen" class="fullscreen-overlay active">
+        <div class="start-content">
+            <button id="start-btn" class="aesthetic-btn">Tap to Open</button>
+        </div>
+    </div>
+
+    <!-- 2. Loading Screen (Retro Pixel Style) -->
+    <div id="loading-screen" class="fullscreen-overlay">
+        <div class="loading-content retro">
+
+            <!-- 8-Bit Pixel Heart -->
+            <div class="heart-container retro-heart beating">
+                <svg viewBox="0 0 15 15" class="pixel-heart">
+                    <!-- Pixel art heart using rects -->
+                    <rect x="2" y="2" width="3" height="3" fill="#00f0ff" />
+                    <rect x="1" y="5" width="5" height="4" fill="#00f0ff" />
+                    <rect x="2" y="9" width="3" height="2" fill="#00f0ff" />
+                    <rect x="3" y="11" width="1" height="1" fill="#00f0ff" />
+
+                    <rect x="10" y="2" width="3" height="3" fill="#00f0ff" />
+                    <rect x="9" y="5" width="5" height="4" fill="#00f0ff" />
+                    <rect x="10" y="9" width="3" height="2" fill="#00f0ff" />
+                    <rect x="11" y="11" width="1" height="1" fill="#00f0ff" />
+
+                    <rect x="5" y="4" width="5" height="5" fill="#00f0ff" />
+                    <rect x="6" y="9" width="3" height="2" fill="#00f0ff" />
+                    <rect x="7" y="11" width="1" height="1" fill="#00f0ff" />
+                    <rect x="7" y="12" width="1" height="1" fill="#00f0ff" />
+                </svg>
+            </div>
+
+            <p class="loading-text retro-text">SABAR YA HAMUD</p>
+
+            <!-- Glowing Retro Progress Bar -->
+            <div class="retro-progress-container">
+                <div class="retro-progress-bar" id="loading-bar"></div>
+            </div>
+            <p id="loading-percentage" class="retro-percentage">0%</p>
+        </div>
+    </div>
+
+    <!-- 4. Hologram Photos Container -->
+    <div id="hologram-container" class="fullscreen-overlay"></div>
+
+    <!-- 3. Star Wars Crawl Container -->
+    <div id="crawl-container" class="fullscreen-overlay crawl-perspective">
+        <div id="crawl-content" class="crawl-text">
+
+            <div class="crawl-section">
+                <h1 class="crawl-title">PERJALANAN KITA</h1>
+                <p>Nyangka ga sih Hamud.</p>
+                <p>Dari roblok sampai sampai udah hampir setahun ini.</p>
+            </div>
+
+            <div class="crawl-section">
+                <p>Bertengkarnya,ketawanya,marah-marahnya,sampai nangisnya pun udah kita lewati bersama.</p>
+                <p>Kadang kita ngerasa capek dan pengen akhirin semuanya, kadang juga kita ngerasa ga mau semua ini
+                    berakhir</p>
+            </div>
+
+            <div class="crawl-section">
+                <p>Perjuangan kita masih panjang banget dan aku harap semoga kita bisa nyampe ke jenjang yang lebih
+                    serius lagi</p>
+                <p class="highlight">HAMUD.</p>
+            </div>
+
+            <div class="crawl-section">
+                <p>Ga ada hubungan yang mudah dan lurus lurus aja,</p>
+                <p>Dan InsyaAllah Kalau kita berdua yakin pada satu sama lain, bakal di kasih jalan kok sama yang di
+                    atas.</p>
+            </div>
+
+            <div class="crawl-section">
+                <p>Aku harap kita bisa bareng terus</p>
+                <p>Dan kalaupun engga, aku ga bakal nyesal pernah menjadi bagian dari perjalan hidup kamu.</p>
+                <p>Semoga kamu juga ga nyesal yaa.</p>
+            </div>
+
+            <div class="crawl-section final-text">
+                <h2 class="crawl-subtitle highlight">lOV U HAMUD</h2>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 5. Phase 3: Dream Destinations Container -->
+    <div id="phase3-container" class="fullscreen-overlay">
+        <!-- The JS will spawn the 3D Text and Country Photos here -->
+    </div>
+
+    <!-- 6. Country Info Modal / Pop-up -->
+    <div id="country-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal" class="close-btn">&times;</button>
+            <div class="modal-body">
+                <img id="modal-img" src="" alt="Country Image">
+                <div class="modal-text">
+                    <h2 id="modal-title" class="retro-text highlight"></h2>
+                    <p id="modal-desc"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
