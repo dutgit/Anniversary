@@ -160,18 +160,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sx = (this.x / this.z) * width + (width / 2);
                 const sy = (this.y / this.z) * height + (height / 2);
 
-                // Size grows as it gets closer (z decreases)
-                const r = Math.max(0, 2 - (this.z / 1000));
-
                 // Brightness grows as it gets closer
                 const alpha = 1 - (this.z / 2000);
 
-                ctx.beginPath();
-                ctx.arc(sx, sy, r, 0, Math.PI * 2);
+                if (window.warpSpeed) {
+                    const px = (this.x / this.pz) * width + (width / 2);
+                    const py = (this.y / this.pz) * height + (height / 2);
 
-                // Add glowing blue aesthetic color
-                ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
-                ctx.fill();
+                    ctx.beginPath();
+                    ctx.moveTo(px, py);
+                    ctx.lineTo(sx, sy);
+                    ctx.strokeStyle = `rgba(0, 240, 255, ${alpha})`;
+                    ctx.lineWidth = Math.max(0.5, 4 - (this.z / 500));
+                    ctx.stroke();
+                } else {
+                    // Size grows as it gets closer (z decreases)
+                    const r = Math.max(0, 2 - (this.z / 1000));
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
+                    ctx.fill();
+                }
             }
         }
 
@@ -179,20 +188,28 @@ document.addEventListener('DOMContentLoaded', () => {
             stars.push(new Star());
         }
 
+        window.warpSpeed = false;
+
         function animate() {
-            // Clear screen with a very faint trail effect (black with opacity)
-            ctx.fillStyle = 'rgba(3, 7, 18, 0.3)'; // Match the body cosmic blue
-            ctx.fillRect(0, 0, width, height);
+            // Clear screen completely so the CSS background image shows through
+            ctx.clearRect(0, 0, width, height);
 
-            // Determine star speed (faster if fast-forwarding)
-            const speed = crawlContainer.classList.contains('fast-forward') ||
-                (document.querySelector('.crawl-text') && document.querySelector('.crawl-text').getAnimations()[0]?.playbackRate > 1)
-                ? 15 : 2;
+            // Determine star speed
+            let speed = 2;
+            if (window.warpSpeed) {
+                speed = 100;
+            } else if (crawlContainer.classList.contains('fast-forward') ||
+                (document.querySelector('.crawl-text') && document.querySelector('.crawl-text').getAnimations()[0]?.playbackRate > 1)) {
+                speed = 15;
+            }
 
+            ctx.globalCompositeOperation = 'lighter';
             stars.forEach(star => {
                 star.update(speed);
                 star.draw();
             });
+
+            ctx.globalCompositeOperation = 'source-over';
 
             requestAnimationFrame(animate);
         }
@@ -281,6 +298,67 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    // --- 6. Portal Transition & Panorama Logic ---
+    let panoramaViewer = null;
+    let isJumping = false;
+
+    function doPortalJump(callback) {
+        if (isJumping) return;
+        isJumping = true;
+
+        document.getElementById('phase3-container').style.pointerEvents = 'none';
+
+        // 1. Engage Warp Drive
+        window.warpSpeed = true;
+
+        // 2. Flash white after warp duration
+        setTimeout(() => {
+            const portal = document.getElementById('portal-transition');
+            portal.classList.add('flash');
+
+            setTimeout(() => {
+                // 3. Swap scene while screen is white
+                callback();
+
+                // 4. Disengage Warp Drive
+                window.warpSpeed = false;
+
+                // 5. Fade out white flash
+                portal.classList.remove('flash');
+
+                setTimeout(() => {
+                    document.getElementById('phase3-container').style.pointerEvents = 'auto';
+                    isJumping = false;
+                }, 1000); // Wait for flash fade out
+
+            }, 500); // White flash duration
+        }, 1500); // Warp sequence duration
+    }
+
+    document.getElementById('panorama-back-btn').addEventListener('click', () => {
+        doPortalJump(() => {
+            // Stop all country music
+            ['china', 'swiss', 'japan'].forEach(id => {
+                const audio = document.getElementById(`music-${id}`);
+                if (audio) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            });
+
+            // Resume bg music
+            document.getElementById('bg-music').play().catch(e => console.log("Audio play blocked", e));
+
+            document.getElementById('panorama-container').classList.remove('active');
+            if (panoramaViewer) {
+                panoramaViewer.destroy();
+                panoramaViewer = null;
+            }
+            document.getElementById('phase3-container').classList.add('active');
+            spawnCountries(); // Respawn the photos!
+        });
+    });
+
     // 5. Phase 3: Dream Destinations
     function startPhase3() {
         // Hide previous containers
@@ -313,6 +391,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function spawnCountries() {
         const phase3Container = document.getElementById('phase3-container');
+
+        // Clear any existing photos to prevent duplicates
+        document.querySelectorAll('.country-photo').forEach(p => p.remove());
         const modal = document.getElementById('country-modal');
         const modalImg = document.getElementById('modal-img');
         const modalTitle = document.getElementById('modal-title');
@@ -362,10 +443,67 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 img.addEventListener('click', () => {
-                    modalImg.src = country.img;
-                    modalTitle.innerText = country.name;
-                    modalDesc.innerText = country.desc;
-                    modal.classList.add('active');
+                    // Bring the clicked image to the front
+                    img.style.zIndex = "999";
+
+                    // Stop all animations on all photos and fade out others
+                    document.querySelectorAll('.country-photo').forEach(photo => {
+                        photo.getAnimations().forEach(anim => anim.cancel());
+                        if (photo !== img) {
+                            photo.style.transition = 'opacity 0.5s ease';
+                            photo.style.opacity = '0';
+                        }
+                    });
+
+                    // Animate the image to the center and zoom in
+                    // This matches the 1500ms warp speed in doPortalJump
+                    img.animate([
+                        { transform: `translateZ(0) translate3d(${tx}vw, ${ty}vh, 0) scale(1)`, opacity: 1 },
+                        { transform: `translateZ(0) translate3d(0vw, 0vh, 0) scale(2)`, opacity: 1, offset: 0.3 },
+                        { transform: `translateZ(0) translate3d(0vw, 0vh, 0) scale(30)`, opacity: 0, offset: 1 }
+                    ], {
+                        duration: 1500,
+                        easing: 'ease-in-out',
+                        fill: 'forwards'
+                    });
+
+                    // Use the 360 version of the country image
+                    const panoramaSrc = `assets/${country.id}_360.jpg`;
+
+                    doPortalJump(() => {
+                        // Pause bg music
+                        document.getElementById('bg-music').pause();
+
+                        // Play country specific music
+                        const countryMusic = document.getElementById(`music-${country.id}`);
+                        if (countryMusic) {
+                            countryMusic.currentTime = 0;
+                            countryMusic.play().catch(e => console.log("Audio play blocked", e));
+                        }
+
+                        // Clean up photos so they reset when we come back
+                        document.querySelectorAll('.country-photo').forEach(p => p.remove());
+
+                        // Hide photo selection screen
+                        document.getElementById('phase3-container').classList.remove('active');
+                        // Show panorama container
+                        document.getElementById('panorama-container').classList.add('active');
+
+                        // Set the fun facts!
+                        document.getElementById('panorama-title').innerText = country.name;
+                        document.getElementById('panorama-desc').innerText = country.desc;
+
+                        // Initialize Pannellum
+                        if (panoramaViewer) {
+                            panoramaViewer.destroy();
+                        }
+                        panoramaViewer = pannellum.viewer('panorama', {
+                            "type": "equirectangular",
+                            "panorama": panoramaSrc,
+                            "autoLoad": true,
+                            "showControls": false // Clean UI
+                        });
+                    });
                 });
 
             }, index * 800); // Stagger entry

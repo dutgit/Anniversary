@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #030712; /* Very dark cosmic blue/black */
+    background-color: #030712;
     color: #fff;
     overflow: hidden; 
     height: 100vh;
@@ -365,24 +365,32 @@ body {
 /* --- MOBILE RESPONSIVE FIXES --- */
 @media (max-width: 600px) {
     #crawl-container {
-        perspective: 350px; /* Stronger 3D effect for smaller screens */
+        perspective: 800px; /* Kurangi efek 3D supaya teks tidak mengecil drastis di atas */
     }
     .crawl-text {
-        width: 95%;
+        width: 100%;
     }
     .crawl-title {
-        font-size: 1.5rem; /* Smaller title for mobile */
+        font-size: 2.2rem; /* Besarkan font untuk HP */
         letter-spacing: 2px;
     }
     .crawl-subtitle {
-        font-size: 1.2rem;
+        font-size: 1.6rem;
     }
     .crawl-section p {
-        font-size: 1.1rem; /* Smaller text for readability */
+        font-size: 1.4rem; /* Teks paragraf lebih besar dan jelas */
         line-height: 1.8;
     }
     .crawl-section p.highlight {
-        font-size: 1.3rem;
+        font-size: 1.6rem;
+    }
+
+    /* Override keyframes khusus di HP: Kurangi kemiringan (rotateX) agar teks tidak menciut */
+    @keyframes crawlSequence {
+        0% { transform: rotateX(15deg) translateY(0); opacity: 0; }
+        3% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: rotateX(15deg) translateY(calc(-100% - 150vh)); opacity: 0; }
     }
     
     /* Adjust hologram sizes for small screens */
@@ -400,4 +408,87 @@ body {
     
     #modal-title { font-size: 1rem; }
     #modal-desc { font-size: 0.95rem; }
+}
+
+/* 7. Panorama 360 Styles */
+#panorama-container {
+    z-index: 9000; /* High z-index, but below warp flash */
+    background: #000;
+    /* We override the default flex display of fullscreen-overlay */
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+#panorama-container.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+#panorama {
+    width: 100vw;
+    height: 100vh;
+}
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 9010;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+.panorama-info-box {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 600px;
+    background: rgba(10, 15, 30, 0.85);
+    border: 2px solid #00f0ff;
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 9010;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    backdrop-filter: blur(8px);
+}
+.panorama-info-box h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+.panorama-info-box p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #e2e8f0;
+}
+
+/* 8. Dimensional Portal Transition */
+#portal-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #fff; /* Pure white flash */
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#portal-transition.flash {
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .panorama-info-box {
+        bottom: 20px;
+        padding: 15px;
+    }
+    .panorama-info-box h2 {
+        font-size: 1rem;
+    }
+    .panorama-info-box p {
+        font-size: 0.85rem;
+    }
 }

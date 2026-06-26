@@ -10,13 +10,16 @@
     <!-- Fonts: Inter for minimal text, Press Start 2P for Retro Loading -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Press+Start+2P&display=swap"
         rel="stylesheet">
+    <!-- Pannellum 360 Viewer -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 </head>
 
 <body>
 
     <!-- Audio Elements -->
     <audio id="bg-music" loop>
-        <source src="music.mp3" type="audio/mpeg">
+        <source src="assets/music.mp3" type="audio/mpeg">
     </audio>
     <audio id="sfx-start">
         <source src="assets/sfx-start.mp3" type="audio/mpeg">
@@ -24,10 +27,18 @@
     <audio id="sfx-complete">
         <source src="assets/sfx-complete.mp3" type="audio/mpeg">
     </audio>
+    <audio id="music-china" loop>
+        <source src="assets/music-china.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="music-swiss" loop>
+        <source src="assets/music-swiss.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="music-japan" loop>
+        <source src="assets/music-japan.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- 3D Canvas Background Layer -->
     <canvas id="cosmic-bg"></canvas>
-
     <!-- 1. Start Interaction Screen -->
     <div id="start-screen" class="fullscreen-overlay active">
         <div class="start-content">
@@ -132,6 +143,19 @@
             </div>
         </div>
     </div>
+
+    <!-- 7. Panorama 360 Container -->
+    <div id="panorama-container" class="fullscreen-overlay">
+        <div id="panorama"></div>
+        <button id="panorama-back-btn" class="aesthetic-btn back-btn">&lt; Kembali</button>
+        <div class="panorama-info-box">
+            <h2 id="panorama-title" class="retro-text highlight"></h2>
+            <p id="panorama-desc"></p>
+        </div>
+    </div>
+
+    <!-- 8. Dimensional Portal Transition -->
+    <div id="portal-transition"></div>
 
     <script src="script.js"></script>
 </body>
