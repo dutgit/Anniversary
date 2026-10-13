@@ -1,0 +1,13 @@
+# System files
+Thumbs.db
+.DS_Store
+
+# Temporary / backups
+*.bak
+*.tmp
+
+# Local testing
+test_*.html
+
+# Reference material (not part of the site)
+referensi.mp4

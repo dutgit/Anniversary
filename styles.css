@@ -1,39 +1,12 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* ==========================================================================
+   ANNIVERSARY WEB - CUSTOM STYLES & 3D ANIMATIONS
+   Complements Tailwind CSS v3 (Utility classes are defined in HTML)
+   ========================================================================== */
 
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #030712;
-    color: #fff;
-    overflow: hidden; 
-    height: 100vh;
-    width: 100vw;
-}
-
-/* 3D Canvas Background */
-#cosmic-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1;
-    pointer-events: none;
-    background-color: transparent; /* Allows body background color to show through */
-}
-
-/* Fullscreen overlays */
+/* --------------------------------------------------------------------------
+   1. Dynamic State Transitions (.active, .flash)
+   -------------------------------------------------------------------------- */
 .fullscreen-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent; 
-    z-index: 10;
     opacity: 0;
     pointer-events: none;
     transition: opacity 1s ease-in-out;
@@ -44,96 +17,57 @@ body {
     pointer-events: auto;
 }
 
-/* START SCREEN */
-#start-screen { z-index: 100; background-color: #000; }
-.aesthetic-btn {
-    background: transparent;
-    color: #00f0ff;
-    border: 1px solid #00f0ff;
-    padding: 12px 30px;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-family: 'Press Start 2P', cursive;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.5);
-    transition: all 0.3s;
-}
-.aesthetic-btn:hover { background: rgba(0, 240, 255, 0.2); }
-
-/* LOADING SCREEN RETRO */
-#loading-screen { z-index: 50; background-color: #000; }
-.loading-content.retro {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-.heart-container.retro-heart {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 10px;
-    filter: drop-shadow(0 0 10px #00f0ff);
-}
-.beating {
-    animation: retroBeat 0.8s step-end infinite alternate;
-}
-@keyframes retroBeat {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-    100% { transform: scale(1.3); }
-}
-.retro-text {
-    font-family: 'Press Start 2P', cursive;
-    color: #00f0ff;
-    font-size: 1rem;
-    text-shadow: 0 0 8px #00f0ff;
-}
-.retro-progress-container {
-    width: 80%; /* Responsive width instead of fixed 250px */
-    max-width: 300px;
-    height: 25px;
-    border: 3px solid #00f0ff;
-    padding: 3px;
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.3);
-}
-.retro-progress-bar {
-    height: 100%;
-    width: 0%;
-    background-color: #00f0ff;
-    box-shadow: 0 0 10px #00f0ff;
-}
-.retro-percentage {
-    font-family: 'Press Start 2P', cursive;
-    color: #00f0ff;
-    font-size: 0.8rem;
-    margin-top: 5px;
+.modal-overlay {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
-/* STAR WARS CRAWL CONTAINER */
-#crawl-container { 
-    z-index: 10; 
-    /* 3D Perspective setup */
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0) scale(1);
+}
+
+#panorama-container {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+#panorama-container.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#portal-transition {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#portal-transition.flash {
+    opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   2. Star Wars 3D Perspective Crawl
+   -------------------------------------------------------------------------- */
+#crawl-container {
     perspective: 600px;
-    align-items: flex-start; /* Align normally to top */
-    overflow: hidden;
 }
 
 .crawl-text {
-    position: absolute;
-    top: 100vh; /* Start exactly at the bottom edge of the screen */
-    width: 90%;
-    max-width: 600px;
-    margin: 0 auto;
-    text-align: center;
-    /* Tilt backwards */
     transform-origin: 50% 100%;
-    transform: rotateX(30deg) translateY(0); 
+    transform: rotateX(30deg) translateY(0);
     opacity: 0;
 }
 
-/* The animation runs only when the container is active */
 #crawl-container.active .crawl-text {
-    animation: crawlSequence 60s linear forwards; /* Sped up to 60s */
+    animation: crawlSequence 60s linear forwards;
 }
 
 @keyframes crawlSequence {
@@ -148,52 +82,38 @@ body {
         opacity: 1;
     }
     100% {
-        transform: rotateX(30deg) translateY(calc(-100% - 150vh)); /* Move up by its own entire height + screen height */
+        transform: rotateX(30deg) translateY(calc(-100% - 150vh));
         opacity: 0;
     }
 }
 
-/* Crawl Internal Styling */
-.crawl-section {
-    margin-bottom: 80px;
-}
-.crawl-title {
-    font-family: 'Press Start 2P', cursive;
-    color: #00f0ff;
-    font-size: 2.5rem;
-    margin-bottom: 40px;
-    letter-spacing: 5px;
-    text-shadow: 0 0 15px rgba(0, 240, 255, 0.8);
-    line-height: 1.5;
-}
-.crawl-subtitle {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 1.8rem;
-    line-height: 1.5;
-}
-.crawl-section p {
-    font-size: 1.5rem;
-    font-weight: 300;
-    line-height: 2;
-    margin-bottom: 20px;
-    letter-spacing: 2px;
-    color: rgba(255, 255, 255, 0.9);
-    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-}
-.crawl-section p.highlight {
-    color: #60a5fa;
-    font-weight: 500;
-    font-size: 1.8rem;
-    text-shadow: 0 0 20px rgba(96, 165, 250, 0.8);
+/* Mobile responsive crawl adjustment */
+@media (max-width: 600px) {
+    #crawl-container {
+        perspective: 800px;
+    }
+
+    @keyframes crawlSequence {
+        0% {
+            transform: rotateX(15deg) translateY(0);
+            opacity: 0;
+        }
+        3% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            transform: rotateX(15deg) translateY(calc(-100% - 150vh));
+            opacity: 0;
+        }
+    }
 }
 
-/* 3D Hologram Photos */
-#hologram-container {
-    perspective: 1000px;
-    z-index: 15; 
-    pointer-events: none; 
-}
-
+/* --------------------------------------------------------------------------
+   3. Dynamic 3D Hologram Photos (Spawned via JavaScript)
+   -------------------------------------------------------------------------- */
 .hologram-photo {
     position: absolute;
     width: 25vw;
@@ -202,27 +122,40 @@ body {
     aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 12px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 25px rgba(0, 240, 255, 0.5);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 240, 255, 0.5);
     border: 2px solid rgba(0, 240, 255, 0.7);
-    pointer-events: auto; /* Re-enable pointer events for hover */
-    opacity: 0; /* Invisible initially */
-    transform: translateZ(-3000px); /* Start far away */
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateZ(-3000px);
     transition: box-shadow 0.3s ease, border-color 0.3s ease;
     cursor: pointer;
 }
 
-.hologram-photo:hover, .hologram-photo:active {
-    box-shadow: 0 25px 50px rgba(0,0,0,0.9), 0 0 50px rgba(0, 240, 255, 1);
-    border-color: #fff;
+.hologram-photo:hover,
+.hologram-photo:active {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), 0 0 50px rgba(0, 240, 255, 1);
+    border-color: #ffffff;
 }
 
-/* Base Anchors for the 4 corners */
+/* Base Anchors for 4 Corners */
 .hologram-tl { top: 15%; left: 8%; }
 .hologram-bl { bottom: 20%; left: 8%; }
 .hologram-tr { top: 15%; right: 8%; }
 .hologram-br { bottom: 20%; right: 8%; }
 
-/* Phase 3: Dream Destinations */
+@media (max-width: 600px) {
+    .hologram-photo {
+        width: 35vw;
+    }
+    .hologram-tl { top: 10%; left: 2%; }
+    .hologram-bl { bottom: 25%; left: 2%; }
+    .hologram-tr { top: 10%; right: 2%; }
+    .hologram-br { bottom: 25%; right: 2%; }
+}
+
+/* --------------------------------------------------------------------------
+   4. Phase 3: Dream Destination Cards & 3D Title
+   -------------------------------------------------------------------------- */
 .phase3-text {
     position: absolute;
     font-family: 'Press Start 2P', cursive;
@@ -233,7 +166,7 @@ body {
     line-height: 1.5;
     z-index: 20;
     pointer-events: none;
-    transform: translateZ(-3000px); /* WAAPI will animate this */
+    transform: translateZ(-3000px);
     opacity: 0;
 }
 
@@ -245,9 +178,9 @@ body {
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: 12px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 25px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 255, 255, 0.4);
     border: 3px solid rgba(255, 255, 255, 0.6);
-    pointer-events: auto; 
+    pointer-events: auto;
     opacity: 0;
     transform: translateZ(-3000px);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -255,96 +188,27 @@ body {
     z-index: 20;
 }
 
-.country-photo:hover, .country-photo:active {
-    box-shadow: 0 25px 50px rgba(0,0,0,0.9), 0 0 50px rgba(0, 240, 255, 1);
+.country-photo:hover,
+.country-photo:active {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), 0 0 50px rgba(0, 240, 255, 1);
     border-color: #00f0ff;
 }
 
-/* Modal / Pop-up Styles */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background-color: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
+@media (max-width: 600px) {
+    .phase3-text {
+        font-size: 1.2rem;
+        padding: 0 10px;
+    }
+    .country-photo {
+        width: 60vw;
+        max-width: 200px;
+        margin-bottom: -30px;
+    }
 }
 
-.modal-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.modal-content {
-    background: rgba(10, 15, 30, 0.9);
-    border: 2px solid #00f0ff;
-    border-radius: 16px;
-    padding: 30px;
-    max-width: 800px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 0 40px rgba(0, 240, 255, 0.3), inset 0 0 20px rgba(0, 240, 255, 0.1);
-    position: relative;
-    transform: translateY(50px) scale(0.9);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.modal-overlay.active .modal-content {
-    transform: translateY(0) scale(1);
-}
-
-.close-btn {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 2rem;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-.close-btn:hover { color: #00f0ff; }
-
-.modal-body {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    margin-top: 10px;
-}
-
-#modal-img {
-    width: 100%;
-    max-width: 500px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.2);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-}
-
-.modal-text {
-    text-align: center;
-}
-
-#modal-title {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    line-height: 1.6;
-}
-
-#modal-desc {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #e2e8f0;
-}
-
-/* Magic Touch Particles */
+/* --------------------------------------------------------------------------
+   5. Magic Touch Cursor Particle Trail
+   -------------------------------------------------------------------------- */
 .magic-particle {
     position: absolute;
     width: 6px;
@@ -358,137 +222,12 @@ body {
 }
 
 @keyframes fadeParticle {
-    0% { transform: scale(1.5) translate(0, 0); opacity: 1; }
-    100% { transform: scale(0) translate(var(--tx), var(--ty)); opacity: 0; }
-}
-
-/* --- MOBILE RESPONSIVE FIXES --- */
-@media (max-width: 600px) {
-    #crawl-container {
-        perspective: 800px; /* Kurangi efek 3D supaya teks tidak mengecil drastis di atas */
+    0% {
+        transform: scale(1.5) translate(0, 0);
+        opacity: 1;
     }
-    .crawl-text {
-        width: 100%;
-    }
-    .crawl-title {
-        font-size: 2.2rem; /* Besarkan font untuk HP */
-        letter-spacing: 2px;
-    }
-    .crawl-subtitle {
-        font-size: 1.6rem;
-    }
-    .crawl-section p {
-        font-size: 1.4rem; /* Teks paragraf lebih besar dan jelas */
-        line-height: 1.8;
-    }
-    .crawl-section p.highlight {
-        font-size: 1.6rem;
-    }
-
-    /* Override keyframes khusus di HP: Kurangi kemiringan (rotateX) agar teks tidak menciut */
-    @keyframes crawlSequence {
-        0% { transform: rotateX(15deg) translateY(0); opacity: 0; }
-        3% { opacity: 1; }
-        90% { opacity: 1; }
-        100% { transform: rotateX(15deg) translateY(calc(-100% - 150vh)); opacity: 0; }
-    }
-    
-    /* Adjust hologram sizes for small screens */
-    .hologram-photo {
-        width: 35vw; /* Slightly larger relative to screen width on mobile */
-    }
-    .hologram-tl { top: 10%; left: 2%; }
-    .hologram-bl { bottom: 25%; left: 2%; }
-    .hologram-tr { top: 10%; right: 2%; }
-    .hologram-br { bottom: 25%; right: 2%; }
-    
-    /* Phase 3 Mobile Adjustments */
-    .phase3-text { font-size: 1.2rem; padding: 0 10px; }
-    .country-photo { width: 60vw; max-width: 200px; margin-bottom: -30px; }
-    
-    #modal-title { font-size: 1rem; }
-    #modal-desc { font-size: 0.95rem; }
-}
-
-/* 7. Panorama 360 Styles */
-#panorama-container {
-    z-index: 9000; /* High z-index, but below warp flash */
-    background: #000;
-    /* We override the default flex display of fullscreen-overlay */
-    display: block;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s ease;
-}
-#panorama-container.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-#panorama {
-    width: 100vw;
-    height: 100vh;
-}
-.back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 9010;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-}
-.panorama-info-box {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 600px;
-    background: rgba(10, 15, 30, 0.85);
-    border: 2px solid #00f0ff;
-    border-radius: 12px;
-    padding: 20px;
-    z-index: 9010;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-    backdrop-filter: blur(8px);
-}
-.panorama-info-box h2 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-.panorama-info-box p {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #e2e8f0;
-}
-
-/* 8. Dimensional Portal Transition */
-#portal-transition {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #fff; /* Pure white flash */
-    z-index: 99999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s ease-in-out;
-}
-
-#portal-transition.flash {
-    opacity: 1;
-}
-
-@media (max-width: 600px) {
-    .panorama-info-box {
-        bottom: 20px;
-        padding: 15px;
-    }
-    .panorama-info-box h2 {
-        font-size: 1rem;
-    }
-    .panorama-info-box p {
-        font-size: 0.85rem;
+    100% {
+        transform: scale(0) translate(var(--tx), var(--ty));
+        opacity: 0;
     }
 }

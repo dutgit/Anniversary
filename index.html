@@ -4,18 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Memories</title>
+    <title>Memories - Perjalanan Kita</title>
 
+    <!-- Tailwind CSS v3 via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            DEFAULT: '#00f0ff',
+                            blue: '#60a5fa',
+                            dark: '#030712',
+                            card: 'rgba(10, 15, 30, 0.9)',
+                        }
+                    },
+                    fontFamily: {
+                        retro: ['"Press Start 2P"', 'cursive'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    keyframes: {
+                        retroBeat: {
+                            '0%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.15)' },
+                            '100%': { transform: 'scale(1.3)' },
+                        }
+                    },
+                    animation: {
+                        retroBeat: 'retroBeat 0.8s step-end infinite alternate',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS (3D Perspective, Keyframes & Dynamic States) -->
     <link rel="stylesheet" href="styles.css">
-    <!-- Fonts: Inter for minimal text, Press Start 2P for Retro Loading -->
+
+    <!-- Fonts: Inter for minimal text, Press Start 2P for Retro Pixel Vibes -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Press+Start+2P&display=swap"
         rel="stylesheet">
+
     <!-- Pannellum 360 Viewer -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
     <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 </head>
 
-<body>
+<body class="font-sans bg-[#030712] text-white overflow-hidden h-screen w-screen m-0 p-0 select-none">
 
     <!-- Audio Elements -->
     <audio id="bg-music" loop>
@@ -38,21 +74,22 @@
     </audio>
 
     <!-- 3D Canvas Background Layer -->
-    <canvas id="cosmic-bg"></canvas>
+    <canvas id="cosmic-bg" class="absolute inset-0 w-screen h-screen z-[1] pointer-events-none bg-transparent"></canvas>
+
     <!-- 1. Start Interaction Screen -->
-    <div id="start-screen" class="fullscreen-overlay active">
-        <div class="start-content">
-            <button id="start-btn" class="aesthetic-btn">Tap to Open</button>
+    <div id="start-screen" class="fullscreen-overlay active fixed inset-0 w-screen h-screen flex items-center justify-center bg-black z-[100]">
+        <div class="start-content text-center">
+            <button id="start-btn" class="aesthetic-btn font-retro text-[#00f0ff] border border-[#00f0ff] px-8 py-3.5 rounded text-sm sm:text-base cursor-pointer shadow-[0_0_10px_rgba(0,240,255,0.5),inset_0_0_10px_rgba(0,240,255,0.5)] hover:bg-[#00f0ff]/20 hover:shadow-[0_0_20px_rgba(0,240,255,0.8),inset_0_0_15px_rgba(0,240,255,0.6)] active:scale-95 transition-all duration-300 tracking-wider">Tap to Open</button>
         </div>
     </div>
 
     <!-- 2. Loading Screen (Retro Pixel Style) -->
-    <div id="loading-screen" class="fullscreen-overlay">
-        <div class="loading-content retro">
+    <div id="loading-screen" class="fullscreen-overlay fixed inset-0 w-screen h-screen flex items-center justify-center bg-black z-50">
+        <div class="loading-content retro flex flex-col items-center gap-4">
 
             <!-- 8-Bit Pixel Heart -->
-            <div class="heart-container retro-heart beating">
-                <svg viewBox="0 0 15 15" class="pixel-heart">
+            <div class="heart-container retro-heart beating w-10 h-10 mb-2.5 drop-shadow-[0_0_10px_#00f0ff] animate-retroBeat">
+                <svg viewBox="0 0 15 15" class="pixel-heart w-full h-full">
                     <!-- Pixel art heart using rects -->
                     <rect x="2" y="2" width="3" height="3" fill="#00f0ff" />
                     <rect x="1" y="5" width="5" height="4" fill="#00f0ff" />
@@ -71,91 +108,88 @@
                 </svg>
             </div>
 
-            <p class="loading-text retro-text">SABAR YA HAMUD</p>
+            <p class="loading-text retro-text font-retro text-[#00f0ff] text-sm sm:text-base drop-shadow-[0_0_8px_#00f0ff] tracking-wider text-center">SABAR YA HAMUD</p>
 
             <!-- Glowing Retro Progress Bar -->
-            <div class="retro-progress-container">
-                <div class="retro-progress-bar" id="loading-bar"></div>
+            <div class="retro-progress-container w-4/5 max-w-[300px] h-[25px] border-[3px] border-[#00f0ff] p-[3px] shadow-[0_0_15px_rgba(0,240,255,0.5),inset_0_0_10px_rgba(0,240,255,0.3)] bg-black/40">
+                <div class="retro-progress-bar h-full w-0 bg-[#00f0ff] shadow-[0_0_10px_#00f0ff] transition-all duration-150" id="loading-bar"></div>
             </div>
-            <p id="loading-percentage" class="retro-percentage">0%</p>
+            <p id="loading-percentage" class="retro-percentage font-retro text-[#00f0ff] text-xs sm:text-sm mt-1.5 drop-shadow-[0_0_5px_#00f0ff]">0%</p>
         </div>
     </div>
 
     <!-- 4. Hologram Photos Container -->
-    <div id="hologram-container" class="fullscreen-overlay"></div>
+    <div id="hologram-container" class="fullscreen-overlay fixed inset-0 w-screen h-screen z-[15] pointer-events-none"></div>
 
     <!-- 3. Star Wars Crawl Container -->
-    <div id="crawl-container" class="fullscreen-overlay crawl-perspective">
-        <div id="crawl-content" class="crawl-text">
+    <div id="crawl-container" class="fullscreen-overlay crawl-perspective fixed inset-0 w-screen h-screen flex items-start justify-center z-10 overflow-hidden">
+        <div id="crawl-content" class="crawl-text absolute top-[100vh] w-[90%] max-w-[600px] mx-auto text-center">
 
-            <div class="crawl-section">
-                <h1 class="crawl-title">PERJALANAN KITA</h1>
-                <p>Nyangka ga sih Hamud.</p>
-                <p>Dari roblok sampai sampai udah hampir setahun ini.</p>
+            <div class="crawl-section mb-16 sm:mb-20">
+                <h1 class="crawl-title font-retro text-[#00f0ff] text-2xl sm:text-4xl mb-8 sm:mb-10 tracking-[3px] sm:tracking-[5px] leading-relaxed drop-shadow-[0_0_15px_rgba(0,240,255,0.8)]">PERJALANAN KITA</h1>
+                <p class="text-xl sm:text-2xl font-light leading-loose mb-5 tracking-[2px] text-white/90 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Nyangka ga sih Hamud.</p>
+                <p class="text-xl sm:text-2xl font-light leading-loose mb-5 tracking-[2px] text-white/90 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Dari roblok sampai udah hampir setahun ini.</p>
             </div>
 
-            <div class="crawl-section">
-                <p>Bertengkarnya,ketawanya,marah-marahnya,sampai nangisnya pun udah kita lewati bersama.</p>
-                <p>Kadang kita ngerasa capek dan pengen akhirin semuanya, kadang juga kita ngerasa ga mau semua ini
-                    berakhir</p>
+            <div class="crawl-section mb-16 sm:mb-20">
+                <p class="text-xl sm:text-2xl font-light leading-loose mb-5 tracking-[2px] text-white/90 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Bertengkarnya, ketawanya, marah-marahnya, sampai nangisnya pun udah kita lewati bersama.</p>
+                <p class="text-xl sm:text-2xl font-light leading-loose mb-5 tracking-[2px] text-white/90 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Kadang kita ngerasa capek dan pengen akhirin semuanya, kadang juga kita ngerasa ga mau semua ini berakhir.</p>
             </div>
 
-            <div class="crawl-section">
-                <p>Perjuangan kita masih panjang banget dan aku harap semoga kita bisa nyampe ke jenjang yang lebih
-                    serius lagi</p>
-                <p class="highlight">HAMUD.</p>
+            <div class="crawl-section mb-16 sm:mb-20">
+                <p class="text-xl sm:text-2xl font-light leading-loose mb-5 tracking-[2px] text-white/90 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Perjuangan kita masih panjang banget dan aku harap semoga kita bisa nyampe ke jenjang yang lebih serius lagi</p>
+                <p class="highlight text-[#60a5fa] font-medium text-2xl sm:text-3xl leading-loose mb-5 tracking-[2px] drop-shadow-[0_0_20px_rgba(96,165,250,0.8)]">HAMUD.</p>
             </div>
 
-            <div class="crawl-section">
-                <p>Ga ada hubungan yang mudah dan lurus lurus aja,</p>
-                <p>Dan InsyaAllah Kalau kita berdua yakin pada satu sama lain, bakal di kasih jalan kok sama yang di
-                    atas.</p>
+            <div class="crawl-section mb-16 sm:mb-20">
+                <p class="text-xl sm:text-2xl font-light leading-loose mb-5 tracking-[2px] text-white/90 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Ga ada hubungan yang mudah dan lurus-lurus aja,</p>
+                <p class="text-xl sm:text-2xl font-light leading-loose mb-5 tracking-[2px] text-white/90 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Dan InsyaAllah kalau kita berdua yakin pada satu sama lain, bakal dikasih jalan kok sama yang di atas.</p>
             </div>
 
-            <div class="crawl-section">
-                <p>Aku harap kita bisa bareng terus</p>
-                <p>Dan kalaupun engga, aku ga bakal nyesal pernah menjadi bagian dari perjalan hidup kamu.</p>
-                <p>Semoga kamu juga ga nyesal yaa.</p>
+            <div class="crawl-section mb-16 sm:mb-20">
+                <p class="text-xl sm:text-2xl font-light leading-loose mb-5 tracking-[2px] text-white/90 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Aku harap kita bisa bareng terus</p>
+                <p class="text-xl sm:text-2xl font-light leading-loose mb-5 tracking-[2px] text-white/90 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Dan kalaupun engga, aku ga bakal nyesel pernah menjadi bagian dari perjalanan hidup kamu.</p>
+                <p class="text-xl sm:text-2xl font-light leading-loose mb-5 tracking-[2px] text-white/90 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]">Semoga kamu juga ga nyesel yaa.</p>
             </div>
 
-            <div class="crawl-section final-text">
-                <h2 class="crawl-subtitle highlight">lOV U HAMUD</h2>
+            <div class="crawl-section final-text mb-16 sm:mb-20">
+                <h2 class="crawl-subtitle highlight font-retro text-[#60a5fa] text-xl sm:text-3xl leading-relaxed drop-shadow-[0_0_20px_rgba(96,165,250,0.8)]">LOV U HAMUD</h2>
             </div>
 
         </div>
     </div>
 
     <!-- 5. Phase 3: Dream Destinations Container -->
-    <div id="phase3-container" class="fullscreen-overlay">
+    <div id="phase3-container" class="fullscreen-overlay fixed inset-0 w-screen h-screen z-20 flex items-center justify-center">
         <!-- The JS will spawn the 3D Text and Country Photos here -->
     </div>
 
     <!-- 6. Country Info Modal / Pop-up -->
-    <div id="country-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button id="close-modal" class="close-btn">&times;</button>
-            <div class="modal-body">
-                <img id="modal-img" src="" alt="Country Image">
-                <div class="modal-text">
-                    <h2 id="modal-title" class="retro-text highlight"></h2>
-                    <p id="modal-desc"></p>
+    <div id="country-modal" class="modal-overlay fixed inset-0 w-screen h-screen bg-black/85 backdrop-blur-md flex items-center justify-center z-[9999]">
+        <div class="modal-content relative bg-[#0a0f1e]/90 border-2 border-[#00f0ff] rounded-2xl p-6 sm:p-8 max-w-[800px] w-[90%] max-h-[90vh] overflow-y-auto shadow-[0_0_40px_rgba(0,240,255,0.3),inset_0_0_20px_rgba(0,240,255,0.1)] translate-y-12 scale-90 transition-transform duration-300">
+            <button id="close-modal" class="close-btn absolute top-3.5 right-5 bg-transparent border-0 text-white text-3xl cursor-pointer hover:text-[#00f0ff] transition-colors leading-none" aria-label="Close">&times;</button>
+            <div class="modal-body flex flex-col gap-5 items-center mt-2.5">
+                <img id="modal-img" src="" alt="Country Image" class="w-full max-w-[500px] rounded-lg border border-white/20 shadow-[0_10px_20px_rgba(0,0,0,0.5)] object-cover">
+                <div class="modal-text text-center">
+                    <h2 id="modal-title" class="retro-text highlight font-retro text-[#60a5fa] text-base sm:text-xl mb-3.5 leading-relaxed drop-shadow-[0_0_10px_rgba(96,165,250,0.8)]"></h2>
+                    <p id="modal-desc" class="text-sm sm:text-base leading-relaxed text-slate-200"></p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- 7. Panorama 360 Container -->
-    <div id="panorama-container" class="fullscreen-overlay">
-        <div id="panorama"></div>
-        <button id="panorama-back-btn" class="aesthetic-btn back-btn">&lt; Kembali</button>
-        <div class="panorama-info-box">
-            <h2 id="panorama-title" class="retro-text highlight"></h2>
-            <p id="panorama-desc"></p>
+    <div id="panorama-container" class="fullscreen-overlay fixed inset-0 w-screen h-screen z-[9000] bg-black block">
+        <div id="panorama" class="w-screen h-screen"></div>
+        <button id="panorama-back-btn" class="aesthetic-btn back-btn absolute top-5 left-5 z-[9010] bg-black/60 backdrop-blur-md font-retro text-[#00f0ff] border border-[#00f0ff] px-6 py-2.5 rounded text-xs sm:text-sm cursor-pointer shadow-[0_0_10px_rgba(0,240,255,0.5),inset_0_0_10px_rgba(0,240,255,0.5)] hover:bg-[#00f0ff]/20 active:scale-95 transition-all duration-300">&lt; Kembali</button>
+        <div class="panorama-info-box absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[600px] bg-[#0a0f1e]/85 border-2 border-[#00f0ff] rounded-xl p-4 sm:p-5 z-[9010] text-center shadow-[0_0_20px_rgba(0,240,255,0.3)] backdrop-blur-md">
+            <h2 id="panorama-title" class="retro-text highlight font-retro text-[#60a5fa] text-base sm:text-xl mb-2.5 drop-shadow-[0_0_10px_rgba(96,165,250,0.8)]"></h2>
+            <p id="panorama-desc" class="text-xs sm:text-sm leading-relaxed text-slate-200"></p>
         </div>
     </div>
 
     <!-- 8. Dimensional Portal Transition -->
-    <div id="portal-transition"></div>
+    <div id="portal-transition" class="fixed inset-0 w-screen h-screen bg-white z-[99999] pointer-events-none"></div>
 
     <script src="script.js"></script>
 </body>
