@@ -9,8 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const sfxStart = document.getElementById('sfx-start');
     const sfxComplete = document.getElementById('sfx-complete');
 
+    // Test shortcut: open with "?tes" to jump straight to the final prompt
+    const isEndingTest = new URLSearchParams(location.search).has('tes');
+
     // 1. Handle Start Button & Loading Bar
     startBtn.addEventListener('click', () => {
+        if (isEndingTest) {
+            startScreen.classList.remove('active');
+            document.getElementById('final-prompt').classList.add('active');
+            return;
+        }
+
         // Play audio
         bgMusic.play().catch(e => console.log("Audio play failed:", e));
         sfxStart.play().catch(e => console.log("SFX play failed:", e));
@@ -274,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function spawnHologram(id, positionClass, container) {
         const img = document.createElement('img');
-        img.src = `assets/photo${id}.jpg`;
+        img.src = `assets/photo${id}.jpeg`;
         img.alt = `Memory ${id}`;
         img.classList.add('hologram-photo', positionClass);
 
@@ -327,7 +336,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 portal.classList.remove('flash');
 
                 setTimeout(() => {
-                    document.getElementById('phase3-container').style.pointerEvents = 'auto';
+                    // Reset to '' so the CSS (.active) decides clickability again,
+                    // instead of leaving a hidden phase3 clickable.
+                    document.getElementById('phase3-container').style.pointerEvents = '';
                     isJumping = false;
                 }, 1000); // Wait for flash fade out
 
@@ -356,6 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             document.getElementById('phase3-container').classList.add('active');
             spawnCountries(); // Respawn the photos!
+            maybeShowFinalPrompt(); // All 3 visited? Show the final prompt
         });
     });
 
@@ -409,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             {
                 id: 'swiss', name: 'Swiss', img: 'assets/swiss.jpg', xOffset: 0,
-                desc: 'Surga dunia di Pegunungan Alpen. Bayangin kita bangun pagi di kabin kayu yang hangat, minum coklat panas sambil ngeliatin hamparan salju abadi dan danau yang sejernih kristal. Damai banget!'
+                desc: 'Surga dunia di kaki Pegunungan Alpen! Kita keliling kota Jenewa yang cantik di tepi danau sejernih kristal, nikmatin sunset sambil ngeliatin pegunungan dari kejauhan. Terus malamnya lanjut nginep di kabin kayu bersalju sambil minum coklat panas berdua. Damai banget!'
             },
             {
                 id: 'japan', name: 'Jepang', img: 'assets/japan.jpg', xOffset: 30,
@@ -423,6 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 img.src = country.img;
                 img.alt = country.name;
                 img.className = 'country-photo';
+                if (visitedCountries.has(country.id)) img.classList.add('visited');
                 phase3Container.appendChild(img);
 
                 const isMobile = window.innerWidth < 768;
@@ -443,6 +456,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 img.addEventListener('click', () => {
+                    if (isJumping) return;
+                    visitedCountries.add(country.id);
+
                     // Bring the clicked image to the front
                     img.style.zIndex = "999";
 
@@ -509,6 +525,155 @@ document.addEventListener('DOMContentLoaded', () => {
             }, index * 800); // Stagger entry
         });
     }
+
+    // --- 7. Final Sequence: Prompt -> Motion Graphic Video -> Ending ---
+    const TOTAL_COUNTRIES = 3;
+    const visitedCountries = new Set();
+    const finalPrompt = document.getElementById('final-prompt');
+    const videoContainer = document.getElementById('video-container');
+    const annivVideo = document.getElementById('anniv-video');
+    const videoPlayBtn = document.getElementById('video-play-btn');
+    const endingScreen = document.getElementById('ending-screen');
+    const heartRain = document.getElementById('heart-rain');
+
+    let finalPromptShown = false;
+    let endingShown = false;
+    let videoFailed = false;
+    let heartRainInterval = null;
+
+    // Missing / broken video file -> never leave her stuck on a black screen
+    annivVideo.addEventListener('error', () => {
+        videoFailed = true;
+        if (videoContainer.classList.contains('active')) showEnding();
+    });
+    annivVideo.addEventListener('ended', showEnding);
+
+    function maybeShowFinalPrompt() {
+        if (finalPromptShown || visitedCountries.size < TOTAL_COUNTRIES) return;
+        finalPromptShown = true;
+        // Let the country photos fly back in first, then pop the prompt
+        setTimeout(() => finalPrompt.classList.add('active'), 3000);
+    }
+
+    document.getElementById('final-btn').addEventListener('click', () => {
+        if (isJumping) return;
+        finalPrompt.classList.remove('active');
+
+        doPortalJump(() => {
+            document.querySelectorAll('.country-photo').forEach(p => p.remove());
+            document.getElementById('phase3-container').classList.remove('active');
+            bgMusic.pause();
+            startVideo();
+        });
+    });
+
+    function startVideo() {
+        if (videoFailed || annivVideo.error) {
+            showEnding();
+            return;
+        }
+
+        videoPlayBtn.classList.add('hidden');
+        videoContainer.classList.add('active');
+        annivVideo.currentTime = 0;
+
+        const playPromise = annivVideo.play();
+        if (playPromise) {
+            playPromise.catch(err => {
+                if (err.name === 'NotAllowedError') {
+                    // Autoplay with sound blocked (common on iOS) -> ask for a tap
+                    videoPlayBtn.classList.remove('hidden');
+                } else {
+                    videoFailed = true;
+                    showEnding();
+                }
+            });
+        }
+    }
+
+    videoPlayBtn.addEventListener('click', () => {
+        videoPlayBtn.classList.add('hidden');
+        annivVideo.play().catch(() => {
+            videoFailed = true;
+            showEnding();
+        });
+    });
+
+    function showEnding() {
+        if (endingShown) return;
+        endingShown = true;
+
+        annivVideo.pause();
+        videoContainer.classList.remove('active');
+        endingScreen.classList.add('active');
+
+        bgMusic.currentTime = 0;
+        bgMusic.play().catch(e => console.log("Audio play blocked", e));
+
+        startHeartRain();
+    }
+
+    document.getElementById('replay-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        // No playable video -> replay the whole experience from the start
+        if (videoFailed || annivVideo.error) {
+            location.reload();
+            return;
+        }
+
+        endingShown = false;
+        stopHeartRain();
+        bgMusic.pause();
+        endingScreen.classList.remove('active');
+        startVideo();
+    });
+
+    // Heart Rain on the ending screen
+    const HEARTS = ['💙', '💜', '🤍', '✨', '💫'];
+
+    function spawnHeart() {
+        const heart = document.createElement('span');
+        heart.className = 'heart-drop';
+        heart.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+        heart.style.left = `${Math.random() * 100}%`;
+        heart.style.setProperty('--size', `${14 + Math.random() * 22}px`);
+        heart.style.setProperty('--dur', `${5 + Math.random() * 5}s`);
+        heart.style.setProperty('--drift', `${(Math.random() - 0.5) * 120}px`);
+        heart.style.setProperty('--spin', `${(Math.random() - 0.5) * 90}deg`);
+        heart.addEventListener('animationend', () => heart.remove());
+        heartRain.appendChild(heart);
+    }
+
+    function startHeartRain() {
+        stopHeartRain();
+        heartRainInterval = setInterval(spawnHeart, 250);
+    }
+
+    function stopHeartRain() {
+        clearInterval(heartRainInterval);
+        heartRainInterval = null;
+        heartRain.innerHTML = '';
+    }
+
+    // Tap anywhere on the ending screen -> little burst of hearts
+    endingScreen.addEventListener('click', (e) => {
+        if (!endingScreen.classList.contains('active') || e.target.closest('button')) return;
+
+        for (let i = 0; i < 8; i++) {
+            const angle = (Math.PI * 2 * i) / 8;
+            const dist = 60 + Math.random() * 40;
+            const burst = document.createElement('span');
+            burst.className = 'heart-burst';
+            burst.textContent = '💙';
+            burst.style.left = `${e.clientX}px`;
+            burst.style.top = `${e.clientY}px`;
+            burst.style.setProperty('--bx', `${Math.cos(angle) * dist}px`);
+            burst.style.setProperty('--by', `${Math.sin(angle) * dist}px`);
+            burst.addEventListener('animationend', () => burst.remove());
+            heartRain.appendChild(burst);
+        }
+    });
 
     // Listen for the end of the Star Wars crawl to trigger Phase 3
     const crawlTextEl = document.querySelector('.crawl-text');

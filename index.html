@@ -188,7 +188,34 @@
         </div>
     </div>
 
-    <!-- 8. Dimensional Portal Transition -->
+    <!-- 8. Final Prompt (appears after all 3 countries are visited) -->
+    <div id="final-prompt" class="fullscreen-overlay fixed inset-0 w-screen h-screen z-[30] bg-black/60 backdrop-blur-sm flex items-center justify-center px-6">
+        <div class="final-card relative bg-[#0a0f1e]/90 border-2 border-[#00f0ff] rounded-2xl px-6 py-8 sm:px-10 sm:py-10 max-w-[480px] w-full text-center shadow-[0_0_40px_rgba(0,240,255,0.35),inset_0_0_20px_rgba(0,240,255,0.1)]">
+            <p class="text-3xl mb-4">✈️</p>
+            <p class="font-retro text-[#60a5fa] text-xs sm:text-sm leading-relaxed mb-4 drop-shadow-[0_0_10px_rgba(96,165,250,0.8)]">3 NEGARA UDAH KITA KELILINGIN</p>
+            <p class="text-sm sm:text-base text-slate-200 leading-relaxed mb-7">Tapi perjalanannya belum selesai, Hamud.<br>Masih ada satu hal lagi buat kamu...</p>
+            <button id="final-btn" class="aesthetic-btn final-btn font-retro text-[#00f0ff] border border-[#00f0ff] px-6 py-3.5 rounded text-xs sm:text-sm cursor-pointer shadow-[0_0_10px_rgba(0,240,255,0.5),inset_0_0_10px_rgba(0,240,255,0.5)] hover:bg-[#00f0ff]/20 hover:shadow-[0_0_20px_rgba(0,240,255,0.8),inset_0_0_15px_rgba(0,240,255,0.6)] active:scale-95 transition-all duration-300 tracking-wider">Satu hal lagi... 💌</button>
+        </div>
+    </div>
+
+    <!-- 9. Final Motion Graphic Video -->
+    <div id="video-container" class="fullscreen-overlay fixed inset-0 w-screen h-screen z-[9500] bg-black flex items-center justify-center">
+        <video id="anniv-video" class="w-full h-full object-contain" src="assets/anniv-video.mp4" playsinline webkit-playsinline preload="auto"></video>
+        <button id="video-play-btn" class="hidden absolute font-retro text-[#00f0ff] border border-[#00f0ff] bg-black/60 backdrop-blur-md px-6 py-3.5 rounded text-xs sm:text-sm cursor-pointer shadow-[0_0_10px_rgba(0,240,255,0.5),inset_0_0_10px_rgba(0,240,255,0.5)] hover:bg-[#00f0ff]/20 active:scale-95 transition-all duration-300">▶ Putar Video</button>
+    </div>
+
+    <!-- 10. Ending Screen -->
+    <div id="ending-screen" class="fullscreen-overlay fixed inset-0 w-screen h-screen z-[9600] flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+        <div id="heart-rain" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col items-center">
+            <h2 class="ending-title font-retro text-[#00f0ff] text-xl sm:text-4xl leading-relaxed tracking-[2px] sm:tracking-[4px] drop-shadow-[0_0_20px_rgba(0,240,255,0.9)]">HAPPY<br>ANNIVERSARY</h2>
+            <p class="ending-name font-retro text-[#60a5fa] text-base sm:text-2xl mt-6 drop-shadow-[0_0_15px_rgba(96,165,250,0.9)]">💙 HAMUD 💙</p>
+            <p class="ending-note text-sm sm:text-lg font-light text-white/90 leading-relaxed mt-6 max-w-[480px] tracking-wide">Makasih udah bertahan sejauh ini.<br>Ayo lanjut perjalanan kita.</p>
+            <button id="replay-btn" class="ending-btn aesthetic-btn font-retro text-[#00f0ff] border border-[#00f0ff] bg-black/40 px-6 py-3 rounded text-[10px] sm:text-xs cursor-pointer mt-10 shadow-[0_0_10px_rgba(0,240,255,0.5),inset_0_0_10px_rgba(0,240,255,0.5)] hover:bg-[#00f0ff]/20 active:scale-95 transition-all duration-300">↺ Nonton Lagi</button>
+        </div>
+    </div>
+
+    <!-- 11. Dimensional Portal Transition -->
     <div id="portal-transition" class="fixed inset-0 w-screen h-screen bg-white z-[99999] pointer-events-none"></div>
 
     <script src="script.js"></script>

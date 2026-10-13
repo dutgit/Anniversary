@@ -231,3 +231,132 @@
         opacity: 0;
     }
 }
+
+/* --------------------------------------------------------------------------
+   6. Visited Country Marker
+   -------------------------------------------------------------------------- */
+.country-photo.visited {
+    border-color: rgba(0, 240, 255, 0.85);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 240, 255, 0.55);
+    filter: saturate(0.85);
+}
+
+/* --------------------------------------------------------------------------
+   7. Final Prompt Card
+   -------------------------------------------------------------------------- */
+.final-card {
+    transform: translateY(40px) scale(0.9);
+    opacity: 0;
+    transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s ease;
+}
+
+#final-prompt.active .final-card {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    transition-delay: 0.2s;
+}
+
+#final-prompt.active .final-btn {
+    animation: finalBtnPulse 2s ease-in-out 1s infinite;
+}
+
+@keyframes finalBtnPulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 28px rgba(0, 240, 255, 0.95), inset 0 0 16px rgba(0, 240, 255, 0.7);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   8. Ending Screen
+   -------------------------------------------------------------------------- */
+#ending-screen {
+    background:
+        radial-gradient(ellipse at 50% 45%, rgba(0, 240, 255, 0.14) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(96, 165, 250, 0.18) 0%, transparent 60%),
+        rgba(3, 7, 18, 0.82);
+}
+
+.ending-title,
+.ending-name,
+.ending-note,
+.ending-btn {
+    opacity: 0;
+    transform: translateY(24px);
+}
+
+#ending-screen.active .ending-title { animation: endingReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards, endingGlow 3s ease-in-out 1.6s infinite; }
+#ending-screen.active .ending-name  { animation: endingReveal 1s cubic-bezier(0.22, 1, 0.36, 1) 1.4s forwards; }
+#ending-screen.active .ending-note  { animation: endingReveal 1s cubic-bezier(0.22, 1, 0.36, 1) 2.3s forwards; }
+#ending-screen.active .ending-btn   { animation: endingReveal 1s cubic-bezier(0.22, 1, 0.36, 1) 3.4s forwards; }
+
+@keyframes endingReveal {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes endingGlow {
+    0%, 100% { text-shadow: 0 0 12px rgba(0, 240, 255, 0.6); }
+    50%      { text-shadow: 0 0 30px rgba(0, 240, 255, 1), 0 0 60px rgba(96, 165, 250, 0.6); }
+}
+
+/* Falling hearts */
+.heart-drop {
+    position: absolute;
+    top: -40px;
+    font-size: var(--size, 20px);
+    line-height: 1;
+    opacity: 0;
+    filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.6));
+    animation: heartFall var(--dur, 7s) linear forwards;
+    will-change: transform, opacity;
+}
+
+@keyframes heartFall {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.9;
+    }
+    85% {
+        opacity: 0.9;
+    }
+    100% {
+        transform: translate(var(--drift, 0px), calc(100vh + 80px)) rotate(var(--spin, 0deg));
+        opacity: 0;
+    }
+}
+
+/* Tap burst */
+.heart-burst {
+    position: fixed;
+    font-size: 18px;
+    line-height: 1;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: heartBurst 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes heartBurst {
+    0% {
+        transform: translate(-50%, -50%) scale(0.4);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(calc(-50% + var(--bx)), calc(-50% + var(--by))) scale(1.1);
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .heart-drop,
+    .heart-burst {
+        animation-duration: 0.01s;
+    }
+}
